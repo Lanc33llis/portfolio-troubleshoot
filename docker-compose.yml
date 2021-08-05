@@ -4,7 +4,7 @@ web:
   build: .
   ports:
     - 8888:80
-  restart: "no"
+  restart: always
   env_file:
     - .env
   volumes:
@@ -13,12 +13,34 @@ web:
     - db
 
 db:
-  image: postgres:tag-not-found
+  image: postgres
   restart: always
   env_file:
     - .env
+nginx:
+  container_name: nginx
+  image: jonasal/nginx-certbot:latest
+  restart: unless-stopped
+  env_file:
+    - ./nginx-certbot.env
+  ports:
+    - 80:80
+    - 443:443
   volumes:
-    - mydatabase:/var/lib/postgresql/data
-
+    - nginx_secrets:/etc/letsencrypt
+    - ./user_conf.d:/etc/nginx/user_conf.d
+  depends_on:
+    - web
+cadvisor:
+  container_name: cadvisor
+  image: gcr.io/cadvisor/cadvisor:latest
+  restart: unless-stopped
+  ports:
+    - 8080:8080
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
 volumes:
-  my_database:
+  nginx_secrets:

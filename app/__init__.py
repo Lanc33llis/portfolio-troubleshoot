@@ -20,7 +20,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-
 class UserModel(db.Model):
     __tablename__ = "users"
 
@@ -37,7 +36,7 @@ class UserModel(db.Model):
 
 @app.route("/")
 def index():
-return rendertemplate("index.html", title="MLH Fellow", url="localhost:5000")
+  return render_template("index.html", title="MLH Fellow", url="localhost:5000")
 
 
 @app.route("/health")
